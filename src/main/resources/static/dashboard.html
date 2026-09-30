@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- tells web browser this doc is written in html-->
+<html>
+	<head>
+		<title> User Dashboard </title>
+	</head>
+	<body style="background-color: #e3e3c8; color: black; font-family: sans-serif; margin: 0;">
+	<!-- margin = 0 allows the navigatin bar to strech completely edge to edge as all gaps are removed-->
+	<nav style="background: #1e293b; padding: 15px; margin-bottom: 20px; font-family: sans-serif;">
+				<!-- makes background dark grey blue color, adds space so text doesnt touch top/bottom edge, creates 20px empty space below bar so doesnt touch vid camera, changes font-->
+				<a href="attendance.html" style=color: white; text-decoration: none; font-weight: bold;> Check-in</a>
+				<a href="dashboard.html" style=color: white; text-decoration: none; font-weight: bold;> User Dashboard</a>
+				<!-- a stands for anchor, tells browser make whatever text or image inside this tag clickable, href is hypertext reference tells browser where to go when the link is clicked, this is the name of the file u want to open-->
+			</nav>
+			
+			<div style:"padding: 20px;">
+				<!--div is an invisible box used to group elements together, has 20 px of empty space in it-->
+				<h2> Attendance Records </h2> <!-- creates a medium sized header at top of section-->
+				<button type = "button" onclick="loadDashboardRecords()">Refresh Records </button>
+				<!--type= button tells browser this a clickable button specifies when clicked trigger function loadDashboardRecords-->
+				<br><br> <!--creates 2 blank lines of vertical space below refresh button and table below it-->
+				
+				<table border="2" cellpadding="10" style="border-collapse: collapse; width: 100%; background-color: #ab7171; color: black;">
+					<!-- border = 2 draws 2 pixel border outside table cells, cellpadding adds 10 pixels of breathing room inside every individual table box so text isnt cramped, collapse glues all borders together into a single clean line-->
+		
+				<thead>
+					<tr style="background-color: c7b5b5;">
+						<th>Student ID </th>
+						<th>Face Data </th>
+						<th> Status </th>
+					</tr>
+				</thead>
+				
+				<!-- creates a table header and table row with names of each row-->
+				
+				<tbody id="tableData">
+					</tbody> 
+				<!--tableData is the actual rows of data in the table-->
+				
+				<p id="dashboardStatus"> </p> <!-- displays text statuses such as loading or error-->
+				
+				</div>
+				<script>
+				async function loadDashboardRecords() {
+					let response = await fetch ('api/FaceMetrics/checkin'); <!--asks for data and stores it in response variable-->
+					if (response.ok) {
+						let students = await response.json();
+						let tableBody = document.getElementById("tableData");
+						        tableBody.innerHTML = "";
+						        
+						        for (let log of logs) {
+						            tableBody.innerHTML += `<tr>
+						                <td>${log.id}</td>
+						                <td>${log.studentId}</td>
+						                <td>${log.checkInTime}</td>
+						            </tr>`;
+						        }
+						    }
+						}
+
+						loadDashboardRecords();
+						</script>
+					
+				
