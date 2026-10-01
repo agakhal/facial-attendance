@@ -1,81 +1,228 @@
 <!DOCTYPE html> <!--tells web browser this doc is written in HTML-->
 <html> <!--opening tag for webpage code-->
-	<head> <!--holds background info abt webpage like title fonts etc-->
-		<title> Signup Form</title> <!-- sets the text that appears on browser tab at top -->
-		</head> <!--closes head section-->
-		<body> <!-- the main container for everything user actually sees on the screen headers text boxes buttons etc-->
-			<!-- -->
-			<video id = "cameraLens" width = "400" height = "300" autoplay style = "border: 1px solid black;"></video><br>
-			<!--creates an empty box on your webpage that displays the live stream from your laptops camera.-->
-			<button type = "button" onclick = "clickPic()"> Click Picture </button><br><br>
-			<!--draws a clickable button labelled click Picture -->
-			<img id = "photoPreview" width = "400" height = "300" style = "display: none; border: 2px solid blue; margin-bottom: 10px;" alt = "Photo Preview">
-			<canvas id = "Capture" width = "400" height = "300" style = "display : none;"> </canvas>
-			<!-- freezes video fram secretly to save picture-->
-			
-			<h2> Signup Student</h2> <!-- h2 means medium size header displaying signup student-->
-			<input type = "text" id = "studentId" placeholder = "Student ID"> <br><br> 
-			<!-- tells browser to draw a single line text box-->
-			<!--gives the box a specific name (id) and uniqye identifier value (studentId)-->
-			<!--gives where u type a faded hint text to tell user to type Student ID there-->
-			<!--line breaks gives extra space-->
-			<input type = "text" id = "studentName" placeholder = "Student Full Name"> <br><br> 
-			<input type = "hidden" id = "faceVector" placeholder = "FaceData"> <br><br> 
-			<button onclick = "addStudentToDatabase()"> Enter</button> <!--creates a clickable button enter and tells browser to go run java function addstudenttodatabase-->
-			<p id = "responseMessage"></p> <!-- creates empty paragraph tag and gives unique label id so java can insert springboots reply text ie studnet has signed up successfully-->
-		
-			<script>
-				async function startCamera() { 
-					let photo = await navigator.mediaDevices.getUserMedia({video:true});
-					document.getElementById("cameraLens").srcObject=photo;
+<head> <!--holds background info abt webpage like title fonts etc-->
+    <title>Facial Attendance System</title> <!-- sets the text that appears on browser tab at top -->
+    <style>
+        /* Shared Section Visibility Control */
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        /* Navigation Bar Styles */
+        nav {
+            background: #1e293b;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: sans-serif;
+            display: flex;
+            gap: 20px;
+        }
+        nav button {
+            background: transparent;
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        nav button.active-nav {
+            border-bottom: 2px solid white;
+        }
+    </style>
+</head>
+<body style="background-color: #e3e3c8; color: black; font-family: sans-serif; margin: 0;">
+    <!-- margin = 0 allows the navigatin bar to strech completely edge to edge as all gaps are removed-->
+    
+    <!-- Unified Navigation Bar -->
+    <nav>
+        <button id="nav-signup" class="active-nav" onclick="showPage('signup')">Signup</button>
+        <button id="nav-checkin" onclick="showPage('checkin')">Check-in</button>
+        <button id="nav-dashboard" onclick="showPage('dashboard')">User Dashboard</button>
+    </nav>
+
+    <!-- Hidden Canvas shared across pages to freeze video frame secretly to save picture -->
+    <canvas id="Capture" width="400" height="300" style="display : none;"> </canvas>
+
+    <!-- ==================== SECTION 1: SIGNUP ==================== -->
+    <div id="section-signup" class="page-section active" style="padding: 20px;">
+        <video id="cameraLensSignup" width="400" height="300" autoplay style="border: 1px solid black;"></video><br>
+        <!--creates an empty box on your webpage that displays the live stream from your laptops camera.-->
+        <button type="button" onclick="clickPic('Signup')"> Click Picture </button><br><br>
+        <!--draws a clickable button labelled click Picture -->
+        <img id="photoPreviewSignup" width="400" height="300" style="display: none; border: 2px solid blue; margin-bottom: 10px;" alt="Photo Preview">
+        
+        <h2> Signup Student</h2> <!-- h2 means medium size header displaying signup student-->
+        <input type="text" id="studentId" placeholder="Student ID"> <br><br> 
+        <!-- tells browser to draw a single line text box-->
+        <!--gives the box a specific name (id) and uniqye identifier value (studentId)-->
+        <!--gives where u type a faded hint text to tell user to type Student ID there-->
+        <!--line breaks gives extra space-->
+        <input type="text" id="studentName" placeholder="Student Full Name"> <br><br> 
+        <input type="hidden" id="faceVectorSignup" placeholder="FaceData"> <br><br> 
+        <button onclick="addStudentToDatabase()"> Enter</button> <!--creates a clickable button enter and tells browser to go run java function addstudenttodatabase-->
+        <p id="responseMessageSignup"></p> <!-- creates empty paragraph tag and gives unique label id so java can insert springboots reply text ie studnet has signed up successfully-->
+    </div>
+
+    <!-- ==================== SECTION 2: CHECK-IN ==================== -->
+    <div id="section-checkin" class="page-section" style="padding: 20px;">
+        <video id="cameraLensCheckin" width="400" height="300" autoplay style="border: 1px solid black;"></video><br>
+        <!--creates an empty box on your webpage that displays the live stream from your laptops camera.-->
+        <button type="button" onclick="clickPic('Checkin')"> Click Picture </button><br><br>
+        <!--draws a clickable button labelled click Picture -->
+        <img id="photoPreviewCheckin" width="400" height="300" style="display: none; border: 2px solid blue; margin-bottom: 10px;" alt="Photo Preview">
+        
+        <h2> Checkin Student</h2> <!-- h2 means medium size header displaying signup student-->
+        
+        <input type="hidden" id="faceVectorCheckin" placeholder="FaceData"> <br><br> 
+        <button onclick="checkinStudentToDatabase()"> Enter</button> <!--creates a clickable button enter and tells browser to go run java function checkinStudentToDatabase-->
+        <p id="responseMessageCheckin"></p> <!-- creates empty paragraph tag and gives unique label id so java can insert springboots reply text ie studnet has signed up successfully-->
+    </div>
+
+    <!-- ==================== SECTION 3: DASHBOARD ==================== -->
+    <div id="section-dashboard" class="page-section" style="padding: 20px;">
+        <!--div is an invisible box used to group elements together, has 20 px of empty space in it-->
+        <h2> Attendance Records </h2> <!-- creates a medium sized header at top of section-->
+        <button type="button" onclick="loadDashboardRecords()">Refresh Records </button>
+        <!--type= button tells browser this a clickable button specifies when clicked trigger function loadDashboardRecords-->
+        <br><br> <!--creates 2 blank lines of vertical space below refresh button and table below it-->
+        
+        <table border="2" cellpadding="10" style="border-collapse: collapse; width: 100%; background-color: #ab7171; color: black;">
+            <!-- border = 2 draws 2 pixel border outside table cells, cellpadding adds 10 pixels of breathing room inside every individual table box so text isnt cramped, collapse glues all borders together into a single clean line-->
+
+            <thead>
+                <tr style="background-color: #c7b5b5;">
+                    <th>Student ID </th>
+                    <th>Face Data </th>
+                    <th> Status </th>
+                </tr>
+            </thead>
+            
+            <!-- creates a table header and table row with names of each row-->
+            
+            <tbody id="tableData">
+            </tbody> 
+            <!--tableData is the actual rows of data in the table-->
+        </table>
+        
+        <p id="dashboardStatus"> </p> <!-- displays text statuses such as loading or error-->
+    </div>
+
+    <script>
+        let cameraStream = null;
+
+        // Switches between views without changing the web URL
+        async function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active-nav'));
+
+            // Show selected page
+            document.getElementById('section-' + pageName).classList.add('active');
+            document.getElementById('nav-' + pageName).classList.add('active-nav');
+
+            // Handle active camera streaming for Signup and Checkin
+            if (pageName === 'signup') {
+                startCamera('cameraLensSignup');
+            } else if (pageName === 'checkin') {
+                startCamera('cameraLensCheckin');
+            } else if (pageName === 'dashboard') {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                }
+                loadDashboardRecords();
+            }
+        }
+
+        async function startCamera(videoElementId) { 
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+            cameraStream = await navigator.mediaDevices.getUserMedia({video:true});
+            document.getElementById(videoElementId).srcObject = cameraStream;
+        }
+        
+        // Start camera on default page load
+        startCamera('cameraLensSignup');
+
+        function clickPic(mode) {
+            let videoElementId = mode === 'Signup' ? 'cameraLensSignup' : 'cameraLensCheckin';
+            let vectorElementId = mode === 'Signup' ? 'faceVectorSignup' : 'faceVectorCheckin';
+            let previewElementId = mode === 'Signup' ? 'photoPreviewSignup' : 'photoPreviewCheckin';
+
+            let video = document.getElementById(videoElementId);
+            let capturedPic = document.getElementById("Capture");
+            
+            capturedPic.getContext("2d").drawImage(video, 0, 0, 400, 300);
+            //unlocks 2d drawing toolkit and built in drawing method that copies an image
+            document.getElementById(vectorElementId).value = capturedPic.toDataURL("image/jpeg");
+            //finds input id facevector on webpage and inserts the long image text generated by toDataURL 
+            
+            let previewBox = document.getElementById(previewElementId);
+            let imageData = capturedPic.toDataURL("image/jpeg");
+            previewBox.src = imageData;
+            previewBox.style.display = "block";
+        }
+        
+        async function addStudentToDatabase() {
+            //everything runs here only when enter button is clicked
+            let id = document.getElementById("studentId").value;
+            let name = document.getElementById("studentName").value;
+            let vector = document.getElementById("faceVectorSignup").value;
+            
+            let studentData = { //JSON package
+                studentId : id, //use : instead of = when assigning multiple values in {} which springboot requires in one JSON package
+                name: name,
+                faceVector : vector
+            };
+            let response  = await fetch ('/api/FaceMetrics/signup', { 
+                method: 'POST', //post means im springboot here is new data to save triggers postMapping method
+                headers: {'Content-Type' : 'application/json'}, 
+                body: JSON.stringify(studentData)
+            });
+            
+            let resultResponse = await response.text(); 
+            document.getElementById("responseMessageSignup").innerText = resultResponse; 
+        }
+
+        async function checkinStudentToDatabase() {
+            let vector = document.getElementById("faceVectorCheckin").value;
+            
+            let studentData = { 
+                faceVector : vector
+            };
+            let response  = await fetch ('/api/FaceMetrics/checkin', { 
+                method: 'POST', 
+                headers: {'Content-Type' : 'application/json'}, 
+                body: JSON.stringify(studentData)
+            });
+            
+            let resultResponse = await response.text(); 
+            document.getElementById("responseMessageCheckin").innerText = resultResponse; 
+        }
+
+        async function loadDashboardRecords() {
+			let response = await fetch('/api/attendance');
+            if (response.ok) {
+                let logs = await response.json();
+                let tableBody = document.getElementById("tableData");
+                tableBody.innerHTML = "";
+                
+				for (let log of logs) {
+				    // Formats checkInTime cleanly if present
+				    let formattedTime = log.checkInTime ? new Date(log.checkInTime).toLocaleString() : 'N/A';
+				    
+				    tableBody.innerHTML += `<tr>
+				        <td>${log.studentId}</td>
+				        <td>${formattedTime}</td>
+				        <td>Verified</td>
+				    </tr>`;
 				}
-				startCamera();
-				//waits for camera permission then saves data 
-				// once user gives camera permission the cmera feed is saved inside photo variable and 
-				//queries the built in media system to gain access to laptops hardware camera
-				//finds video id cemera lens and links live video data into it so it displays on screen
-			
-				function clickPic() {
-					let video = document.getElementById("cameraLens");
-					let capturedPic = document.getElementById("Capture");
-					
-					capturedPic.getContext("2d").drawImage(video, 0, 0, 400, 300);
-				//unlocks 2d drawing toolkit and built in drawing method that copies an image
-					document.getElementById("faceVector").value = capturedPic.toDataURL("image/jpeg");
-					//finds input id facevector on webpage and inserts the long image text generated by toDataURL 
-				let previewBox = document.getElementById("photoPreview");
-				let imageData = capturedPic.toDataURL("image/jpeg");
-				previewBox.src = imageData;
-				previewBox.style.display = "block";
-				
-				}
-				
-				async function addStudentToDatabase() {
-					//everything runs here only when enter button is clicked
-				let id = document.getElementById("studentId").value;
-				let name = document.getElementById("studentName").value;
-				let vector = document.getElementById("faceVector").value;
-				//document refers to entire html webpage, getelement.. searches the page for html element
-				//that has id = "" .value extracts whatever text user entered into that specific text box
-				//let id stores that extracted text inside temporrary java variable named id 
-				
-				let studentData = { //JSON package
-				studentId : id, //use : instead of = when assigning multiple values in {} which 
-				//springboot requires in one JSON package
-				name: name,
-				faceVector : vector
-			};
-			let response  = await fetch ('/api/FaceMetrics/signup' ,{ // holds the computers response to request in reponse variable  //tells pause until server replies  // fetch built in function opens netork connection to talk to server
-				method: 'POST', //post means im sprinboot here is new data to save triggers postMapping method
-			headers: {'Content-Type' : 'application/json'}, // asks what kind of format of data is inside this package'}    //data inside is written in JSON text format
-			body: JSON.stringify(studentData)
-			//converts javascript memory object into plain text string(studentData)
-			});
-			
-			let resultResponse = await response.text(); //extract plain text message from serever response
-				document.getElementById("responseMessage").innerText = resultResponse; // inner opens box to write inside resultResponse exact words are displayed which are sent back from springboot
-			}
-			</script> <!-- closes script tag -->
-			</body> <!-- closes body tag-->
-			</html> <!-- closes html tag-->
-			
+            }
+        }
+    </script>
+</body>
+</html>
