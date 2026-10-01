@@ -67,21 +67,18 @@
         <p id="responseMessageSignup"></p> <!-- creates empty paragraph tag and gives unique label id so java can insert springboots reply text ie studnet has signed up successfully-->
     </div>
 
-    <!-- ==================== SECTION 2: CHECK-IN ==================== -->
-    <div id="section-checkin" class="page-section" style="padding: 20px;">
-        <video id="cameraLensCheckin" width="400" height="300" autoplay style="border: 1px solid black;"></video><br>
-        <!--creates an empty box on your webpage that displays the live stream from your laptops camera.-->
-        <button type="button" onclick="clickPic('Checkin')"> Click Picture </button><br><br>
-        <!--draws a clickable button labelled click Picture -->
-        <img id="photoPreviewCheckin" width="400" height="300" style="display: none; border: 2px solid blue; margin-bottom: 10px;" alt="Photo Preview">
-        
-        <h2> Checkin Student</h2> <!-- h2 means medium size header displaying signup student-->
-        
-        <input type="hidden" id="faceVectorCheckin" placeholder="FaceData"> <br><br> 
-        <button onclick="checkinStudentToDatabase()"> Enter</button> <!--creates a clickable button enter and tells browser to go run java function checkinStudentToDatabase-->
-        <p id="responseMessageCheckin"></p> <!-- creates empty paragraph tag and gives unique label id so java can insert springboots reply text ie studnet has signed up successfully-->
-    </div>
-
+	<!-- ==================== SECTION 2: CHECK-IN ==================== -->
+	    <div id="section-checkin" class="page-section" style="padding: 20px;">
+	        <video id="cameraLensCheckin" width="400" height="300" autoplay style="border: 1px solid black;"></video><br>
+	        <button type="button" onclick="clickPic('Checkin')"> Click Picture </button><br><br>
+	        <img id="photoPreviewCheckin" width="400" height="300" style="display: none; border: 2px solid blue; margin-bottom: 10px;" alt="Photo Preview">
+	        
+	        <h2>Check-in Student</h2> 
+	        <input type="text" id="checkinStudentId" placeholder="Enter Student ID"> <br><br> 
+	        <input type="hidden" id="faceVectorCheckin"> <br><br> 
+	        <button onclick="checkinStudentToDatabase()"> Enter </button>
+	        <p id="responseMessageCheckin"></p> 
+	    </div>
     <!-- ==================== SECTION 3: DASHBOARD ==================== -->
     <div id="section-dashboard" class="page-section" style="padding: 20px;">
         <!--div is an invisible box used to group elements together, has 20 px of empty space in it-->
@@ -186,22 +183,24 @@
             let resultResponse = await response.text(); 
             document.getElementById("responseMessageSignup").innerText = resultResponse; 
         }
-
-        async function checkinStudentToDatabase() {
-            let vector = document.getElementById("faceVectorCheckin").value;
-            
-            let studentData = { 
-                faceVector : vector
-            };
-            let response  = await fetch ('/api/FaceMetrics/checkin', { 
-                method: 'POST', 
-                headers: {'Content-Type' : 'application/json'}, 
-                body: JSON.stringify(studentData)
-            });
-            
-            let resultResponse = await response.text(); 
-            document.getElementById("responseMessageCheckin").innerText = resultResponse; 
-        }
+		async function checkinStudentToDatabase() {
+		            let id = document.getElementById("checkinStudentId").value; // Gets the student ID you typed
+		            let vector = document.getElementById("faceVectorCheckin").value; // Gets the webcam snapshot
+		            
+		            let checkinData = { 
+		                studentId: id,
+		                faceVector: vector
+		            };
+		            
+		            let response = await fetch('/api/FaceMetrics/checkin', { 
+		                method: 'POST', 
+		                headers: {'Content-Type': 'application/json'}, 
+		                body: JSON.stringify(checkinData)
+		            });
+		            
+		            let resultResponse = await response.text(); 
+		            document.getElementById("responseMessageCheckin").innerText = resultResponse; 
+		        }
 
         async function loadDashboardRecords() {
 			let response = await fetch('/api/attendance');

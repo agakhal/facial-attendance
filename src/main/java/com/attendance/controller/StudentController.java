@@ -31,20 +31,24 @@ public class StudentController {
 	
 	@PostMapping("/checkin") 
 	public String checkInStudent (@RequestBody Student incomingData) {
-	    List<Student> allStudents = studentRepository.findAll();
-	    
-	    for (Student s : allStudents) {
-	        if (s.getFaceVector() != null && s.getFaceVector().equals(incomingData.getFaceVector())) {
-	            // Log attendance upon match using 's' and your correct repository name
+	    // Look up the student by their ID
+	    return studentRepository.findById(incomingData.getStudentId())
+	        .map(student -> {
+	            // Optional: update their face vector with the latest webcam snapshot if desired
+	            if (incomingData.getFaceVector() != null && !incomingData.getFaceVector().isEmpty()) {
+	                student.setFaceVector(incomingData.getFaceVector());
+	                studentRepository.save(student);
+	            }
+
+	            // Create and save the attendance log
 	            AttendanceLog log = new AttendanceLog();
-	            log.setStudentId(s.getStudentId());
+	            log.setStudentId(student.getStudentId());
 	            log.setCheckInTime(LocalDateTime.now());
 	            attendanceRepository.save(log);
 	            
-	            return s.getName() + " : Attendance marked!";
-	        }
-	    }
-	    return "Face not recognized!";
+	            return student.getName() + " : Attendance marked successfully via webcam!";
+	        })
+	        .orElse("Student ID not recognized. Please sign up first.");
 	}
 	@GetMapping("/{id}") //listens for a get request with a value at the end
 	public Student getStudentById(@PathVariable String id) { 
