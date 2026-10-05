@@ -34,12 +34,13 @@
         }
     </style>
 </head>
-<body style="background-color: #e3e3c8; color: black; font-family: sans-serif; margin: 0;">
+<body style="background-color: #f8fafc; color: #1e293b; font-family: 'Segoe UI', sans-serif; margin: 0;">
     <!-- margin = 0 allows the navigatin bar to strech completely edge to edge as all gaps are removed-->
     
     <!-- Unified Navigation Bar -->
     <nav>
-        <button id="nav-signup" class="active-nav" onclick="showPage('signup')">Signup</button>
+        <button id="nav-home" class="active-nav" onclick="showPage('home')">Home</button>
+        <button id="nav-signup" onclick="showPage('signup')">Signup</button>
         <button id="nav-checkin" onclick="showPage('checkin')">Check-in</button>
         <button id="nav-dashboard" onclick="showPage('dashboard')">User Dashboard</button>
     </nav>
@@ -47,13 +48,23 @@
     <!-- Hidden Canvas shared across pages to freeze video frame secretly to save picture -->
     <canvas id="Capture" width="400" height="300" style="display : none;"> </canvas>
 
+    <!-- ==================== SECTION 0: HOME ==================== -->
+    <div id="section-home" class="page-section active" style="padding: 30px; text-align: center;">
+        <h2>Welcome to Facial Attendance System</h2>
+        <p>Please choose an option below to get started:</p>
+        <br>
+        <button onclick="showPage('signup')">Go to Signup</button> &nbsp;&nbsp;
+        <button onclick="showPage('checkin')">Go to Check-in</button> &nbsp;&nbsp;
+        <button onclick="showPage('dashboard')">Go to Dashboard</button>
+    </div>
+
     <!-- ==================== SECTION 1: SIGNUP ==================== -->
-    <div id="section-signup" class="page-section active" style="padding: 20px;">
-        <video id="cameraLensSignup" width="400" height="300" autoplay style="border: 1px solid black;"></video><br>
+    <div id="section-signup" class="page-section" style="padding: 20px;">
+		<video id="cameraLensSignup" width="400" height="300" autoplay style="border: 1px solid #cbd5e1; border-radius: 8px; background: #000;"></video>
         <!--creates an empty box on your webpage that displays the live stream from your laptops camera.-->
         <button type="button" onclick="clickPic('Signup')"> Click Picture </button><br><br>
         <!--draws a clickable button labelled click Picture -->
-        <img id="photoPreviewSignup" width="400" height="300" style="display: none; border: 2px solid blue; margin-bottom: 10px;" alt="Photo Preview">
+		<img id="photoPreviewSignup" width="400" height="300" style="display: none; border: 2px solid #4f46e5; border-radius: 8px; margin-bottom: 15px;" alt="Photo Preview">
         
         <h2> Signup Student</h2> <!-- h2 means medium size header displaying signup student-->
         <input type="text" id="studentId" placeholder="Student ID"> <br><br> 
@@ -69,9 +80,9 @@
 
 	<!-- ==================== SECTION 2: CHECK-IN ==================== -->
 	    <div id="section-checkin" class="page-section" style="padding: 20px;">
-	        <video id="cameraLensCheckin" width="400" height="300" autoplay style="border: 1px solid black;"></video><br>
+			<video id="cameraLensCheckin" width="400" height="300" autoplay style="border: 1px solid #cbd5e1; border-radius: 8px; background: #000;"></video>
 	        <button type="button" onclick="clickPic('Checkin')"> Click Picture </button><br><br>
-	        <img id="photoPreviewCheckin" width="400" height="300" style="display: none; border: 2px solid blue; margin-bottom: 10px;" alt="Photo Preview">
+			<img id="photoPreviewCheckin" width="400" height="300" style="display: none; border: 2px solid #4f46e5; border-radius: 8px; margin-bottom: 15px;" alt="Photo Preview">
 	        
 	        <h2>Check-in Student</h2> 
 	        <input type="text" id="checkinStudentId" placeholder="Enter Student ID"> <br><br> 
@@ -87,11 +98,11 @@
         <!--type= button tells browser this a clickable button specifies when clicked trigger function loadDashboardRecords-->
         <br><br> <!--creates 2 blank lines of vertical space below refresh button and table below it-->
         
-        <table border="2" cellpadding="10" style="border-collapse: collapse; width: 100%; background-color: #ab7171; color: black;">
+		<table style="border-collapse: collapse; width: 100%; background-color: #ffffff; color: #1e293b; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
             <!-- border = 2 draws 2 pixel border outside table cells, cellpadding adds 10 pixels of breathing room inside every individual table box so text isnt cramped, collapse glues all borders together into a single clean line-->
 
 			<thead>
-			    <tr style="background-color: #c7b5b5;">
+				<tr style="background-color: #f1f5f9; color: #475569;">
 			        <th>Student ID</th>
 			        <th>Check-In Time</th>
 			        <th>Status</th>
@@ -125,11 +136,14 @@
                 startCamera('cameraLensSignup');
             } else if (pageName === 'checkin') {
                 startCamera('cameraLensCheckin');
-            } else if (pageName === 'dashboard') {
+            } else {
                 if (cameraStream) {
                     cameraStream.getTracks().forEach(track => track.stop());
+                    cameraStream = null;
                 }
-                loadDashboardRecords();
+                if (pageName === 'dashboard') {
+                    loadDashboardRecords();
+                }
             }
         }
 
@@ -140,9 +154,6 @@
             cameraStream = await navigator.mediaDevices.getUserMedia({video:true});
             document.getElementById(videoElementId).srcObject = cameraStream;
         }
-        
-        // Start camera on default page load
-        startCamera('cameraLensSignup');
 
         function clickPic(mode) {
             let videoElementId = mode === 'Signup' ? 'cameraLensSignup' : 'cameraLensCheckin';
