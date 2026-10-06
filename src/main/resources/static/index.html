@@ -320,4 +320,188 @@
         </div>
     </div>
 
-    <!-- JavaScript to Handle
+    <!-- JavaScript to Handle Section Switching, Camera Feeds & Spring Boot Actions -->
+    <script>
+        function showPage(pageId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active style from all nav buttons
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('active-nav');
+            });
+
+            // Show target section
+            const target = document.getElementById('section-' + pageId);
+            if (target) {
+                target.classList.add('active');
+            }
+
+            // Highlight target nav button
+            const navBtn = document.getElementById('nav-' + pageId);
+            if (navBtn) {
+                navBtn.classList.add('active-nav');
+            }
+
+            // Start webcam when switching to signup or checkin tabs
+            if (pageId === 'signup') {
+                startCamera('cameraLensSignup');
+            } else if (pageId === 'checkin') {
+                startCamera('cameraLensCheckin');
+            } else if (pageId === 'dashboard') {
+                loadDashboardRecords();
+            }
+        }
+
+        // Turn on laptop camera
+        function startCamera(videoId) {
+            const videoElement = document.getElementById(videoId);
+            if (videoElement && !videoElement.srcObject) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => {
+                        videoElement.srcObject = stream;
+                    })
+                    .catch(error => {
+                        console.error("Webcam error: ", error);
+                        alert("Could not access your webcam. Please check browser permissions.");
+                    });
+            }
+        }
+
+        // Capture snapshot from video feed
+        function clickPic(type) {
+            console.log("Capture picture triggered for: " + type);
+            const videoId = type === 'Signup' ? 'cameraLensSignup' : 'cameraLensCheckin';
+            const previewId = type === 'Signup' ? 'photoPreviewSignup' : 'photoPreviewCheckin';
+            const hiddenInputId = type === 'Signup' ? 'faceVectorSignup' : 'faceVectorCheckin';
+            
+            const video = document.getElementById(videoId);
+            const preview = document.getElementById(previewId);
+            const canvas = document.getElementById('Capture');
+            
+            if (video && canvas && preview) {
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const base64Image = canvas.toDataURL('image/png');
+                
+                // Show preview image
+                preview.src = base64Image;
+                preview.style.display = 'block';
+
+                // Save image data to hidden input
+                const hiddenInput = document.getElementById(hiddenInputId);
+                if (hiddenInput) {
+                    hiddenInput.value = base64Image;
+                }
+            }
+        }
+
+        // 1. Send Student Signup to Spring Boot Backend
+        function addStudentToDatabase() {
+            const studentId = document.getElementById('studentId').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const imageData = document.getElementById('faceVectorSignup').value;
+            const msgElement = document.getElementById('responseMessageSignup');
+
+            if (!studentId || !studentName) {
+                alert("Please enter both Student ID and Name.");
+                return;
+            }
+
+            if (!imageData) {
+                alert("Please capture your picture first!");
+                return;
+            }
+
+            msgElement.style.color = "var(--primary)";
+            msgElement.textContent = "Processing signup...";
+
+            fetch('/api/students/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    studentId: studentId,
+                    name: studentName,
+                    image: imageData
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                msgElement.textContent = "Success: " + data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                msgElement.style.color = "red";
+                msgElement.textContent = "Error connecting to server.";
+            });
+        }
+
+        // 2. Send Check-In to Spring Boot Backend
+        function checkinStudentToDatabase() {
+            const studentId = document.getElementById('checkinStudentId').value.trim();
+            const imageData = document.getElementById('faceVectorCheckin').value;
+            const msgElement = document.getElementById('responseMessageCheckin');
+
+            if (!studentId || !imageData) {
+                alert("Please enter your Student ID and capture your photo!");
+                return;
+            }
+
+            msgElement.style.color = "var(--primary)";
+            msgElement.textContent = "Verifying face and checking in...";
+
+            fetch('/api/attendance/checkin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    studentId: studentId,
+                    image: imageData
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                msgElement.textContent = "Check-in Result: " + data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                msgElement.style.color = "red";
+                msgElement.textContent = "Error connecting to server.";
+            });
+        }
+
+        // 3. Load Records into the Dashboard Table
+        function loadDashboardRecords() {
+            const tableBody = document.getElementById('attendanceTableBody');
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading records...</td></tr>`;
+
+            fetch('/api/attendance/records')
+                .then(response => response.json())
+                .then(records => {
+                    tableBody.innerHTML = "";
+                    if (!records || records.length === 0) {
+                        tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No attendance records found.</td></tr>`;
+                        return;
+                    }
+
+                    records.forEach(record => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${record.studentId}</td>
+                            <td>${record.name || 'N/A'}</td>
+                            <td>${record.timestamp || new Date().toLocaleString()}</td>
+                            <td><span style="color: #10b981; font-weight: 600;">${record.status || 'Verified'}</span></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading records:', error);
+                    tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">Failed to load records from server.</td></tr>`;
+                });
+        }
+    </script>
+</body>
+</html>
