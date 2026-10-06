@@ -62,7 +62,7 @@ public class AttendanceController{
 	}
 	
 	// if no check in was found then check in new student.
-	AttendanceLog log = new AttendanceLog(studentId, LocalDateTime.now());
+	AttendanceLog log = new AttendanceLog(studentId, now);
 	// creates a new java object combining the two pieces of data
 	attendanceRepository.save(log); // sends object to sql executing insert statement bts
 	return "checked in successfully!";
