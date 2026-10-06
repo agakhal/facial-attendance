@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.time.Duration;
 
@@ -43,7 +44,7 @@ public class AttendanceController{
 	    
 		//declares markAttendance method that returns a saved AttendanceLog object
 		// extracts studentID passed in url and assigns it to studentID variable
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Vancouver"));
 		List<AttendanceLog> logs = attendanceRepository.findByStudentId(studentId);
 	// creates a list named log that holds multiple attendancelog objects and get all existing logs from database 
 		
