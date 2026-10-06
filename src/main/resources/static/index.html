@@ -293,9 +293,73 @@
         </div>
     </div>
 
-    <!-- ==================== SECTION 3: DASHBOARD ==================== -->
-    <div id="section-dashboard" class="page-section">
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; color: var(--text-main);">Attendance Records</h2>
-                <!-- type=button tells browser this is a clickable button, specifies when clicked trigger function loadDashboardRecords
+	<!-- ==================== SECTION 3: DASHBOARD ==================== -->
+	    <div id="section-dashboard" class="page-section">
+	        <div class="card">
+	            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+	                <h2 style="margin: 0; color: var(--text-main);">Attendance Records</h2>
+	                <button type="button" class="action-btn" onclick="loadDashboardRecords()">Refresh Records</button>
+	            </div>
+	            
+	            <table>
+	                <thead>
+	                    <tr>
+	                        <th>Student ID</th>
+	                        <th>Name</th>
+	                        <th>Timestamp</th>
+	                        <th>Status</th>
+	                    </tr>
+	                </thead>
+	                <tbody id="attendanceTableBody">
+	                    <tr>
+	                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Click refresh to load attendance records.</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+	    </div>
+
+	    <!-- JavaScript to Handle Section Switching & Actions -->
+	    <script>
+	        function showPage(pageId) {
+	            // Hide all sections
+	            document.querySelectorAll('.page-section').forEach(section => {
+	                section.classList.remove('active');
+	            });
+
+	            // Remove active style from all nav buttons
+	            document.querySelectorAll('nav button').forEach(btn => {
+	                btn.classList.remove('active-nav');
+	            });
+
+	            // Show target section
+	            const target = document.getElementById('section-' + pageId);
+	            if (target) {
+	                target.classList.add('active');
+	            }
+
+	            // Highlight target nav button
+	            const navBtn = document.getElementById('nav-' + pageId);
+	            if (navBtn) {
+	                navBtn.classList.add('active-nav');
+	            }
+	        }
+
+	        function clickPic(type) {
+	            console.log("Capture picture triggered for: " + type);
+	        }
+
+	        function addStudentToDatabase() {
+	            console.log("Adding student to database...");
+	        }
+
+	        function checkinStudentToDatabase() {
+	            console.log("Checking in student...");
+	        }
+
+	        function loadDashboardRecords() {
+	            console.log("Loading dashboard records...");
+	        }
+	    </script>
+	</body>
+	</html>
