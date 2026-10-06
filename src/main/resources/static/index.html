@@ -192,7 +192,7 @@
     <!-- Modern Navigation Bar -->
     <nav>
         <div class="nav-brand">
-            <div class="logo-badge">📸</div>
+            <div class="logo-badge">🛡️</div>
             <span>FaceMetric</span>
         </div>
         <div class="nav-links">
@@ -293,111 +293,31 @@
         </div>
     </div>
 
-	<!-- ==================== SECTION 3: DASHBOARD ==================== -->
-	    <div id="section-dashboard" class="page-section">
-	        <div class="card">
-	            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-	                <h2 style="margin: 0; color: var(--text-main);">Attendance Records</h2>
-	                <button type="button" class="action-btn" onclick="loadDashboardRecords()">Refresh Records</button>
-	            </div>
-	            
-	            <table>
-	                <thead>
-	                    <tr>
-	                        <th>Student ID</th>
-	                        <th>Name</th>
-	                        <th>Timestamp</th>
-	                        <th>Status</th>
-	                    </tr>
-	                </thead>
-	                <tbody id="attendanceTableBody">
-	                    <tr>
-	                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Click refresh to load attendance records.</td>
-	                    </tr>
-	                </tbody>
-	            </table>
-	        </div>
-	    </div>
+    <!-- ==================== SECTION 3: DASHBOARD ==================== -->
+    <div id="section-dashboard" class="page-section">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: var(--text-main);">Attendance Records</h2>
+                <!-- type=button tells browser this is a clickable button, specifies when clicked trigger function loadDashboardRecords this is my file -->
+                <button type="button" class="action-btn" onclick="loadDashboardRecords()">Refresh Records</button>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Timestamp</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceTableBody">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted);">Click refresh to load attendance records.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	    <!-- JavaScript to Handle Section Switching & Actions -->
-		<!-- Replace your old <script> block with this complete script -->
-		    <script>
-		        function showPage(pageId) {
-		            document.querySelectorAll('.page-section').forEach(section => {
-		                section.classList.remove('active');
-		            });
-
-		            document.querySelectorAll('nav button').forEach(btn => {
-		                btn.classList.remove('active-nav');
-		            });
-
-		            const target = document.getElementById('section-' + pageId);
-		            if (target) {
-		                target.classList.add('active');
-		            }
-
-		            const navBtn = document.getElementById('nav-' + pageId);
-		            if (navBtn) {
-		                navBtn.classList.add('active-nav');
-		            }
-
-		            // Automatically start the webcam when switching to signup or check-in tabs
-		            if (pageId === 'signup') {
-		                startCamera('cameraLensSignup');
-		            } else if (pageId === 'checkin') {
-		                startCamera('cameraLensCheckin');
-		            }
-		        }
-
-		        // Function to turn on the laptop camera
-		        function startCamera(videoId) {
-		            const videoElement = document.getElementById(videoId);
-		            if (videoElement && !videoElement.srcObject) {
-		                navigator.mediaDevices.getUserMedia({ video: true })
-		                    .then(stream => {
-		                        videoElement.srcObject = stream;
-		                    })
-		                    .catch(error => {
-		                        console.error("Error accessing webcam: ", error);
-		                        alert("Could not access your webcam. Please check browser permissions.");
-		                    });
-		            }
-		        }
-
-		        // Function to capture a snapshot from the video feed
-		        function clickPic(type) {
-		            console.log("Capture picture triggered for: " + type);
-		            const videoId = type === 'Signup' ? 'cameraLensSignup' : 'cameraLensCheckin';
-		            const previewId = type === 'Signup' ? 'photoPreviewSignup' : 'photoPreviewCheckin';
-		            
-		            const video = document.getElementById(videoId);
-		            const preview = document.getElementById(previewId);
-		            const canvas = document.getElementById('Capture');
-		            
-		            if (video && canvas && preview) {
-		                const context = canvas.getContext('2d');
-		                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-		                
-		                // Display the captured photo in the preview image tag
-		                preview.src = canvas.toDataURL('image/png');
-		                preview.style.display = 'block';
-		            }
-		        }
-
-		        function addStudentToDatabase() {
-		            console.log("Adding student to database...");
-		        }
-
-		        function checkinStudentToDatabase() {
-		            console.log("Checking in student...");
-		        }
-
-		        function loadDashboardRecords() {
-		            console.log("Loading dashboard records...");
-		        }
-
-		        // Auto-start camera on page load if starting on check-in or signup
-		        window.onload = function() {
-		            startCamera('cameraLensCheckin');
-		        };
-		    </script>
+    <!-- JavaScript to Handle
