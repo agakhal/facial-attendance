@@ -17,7 +17,12 @@ public class AttendanceController{
 
 	@Autowired
 	private AttendanceRepository attendanceRepository; // instantiates automatically 
-	
+	@GetMapping("/clear-db")
+	@ResponseBody
+	public String clearDatabase() {
+	    attendanceRepository.deleteAll();
+	    return "Database cleared successfully!";
+	}
 	// Add this helper DTO class inside AttendanceController
     public static class AttendanceRequestDTO {
         private String studentId;
