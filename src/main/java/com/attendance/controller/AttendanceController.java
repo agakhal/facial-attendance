@@ -18,9 +18,22 @@ public class AttendanceController{
 	@Autowired
 	private AttendanceRepository attendanceRepository; // instantiates automatically 
 	
+	// Add this helper DTO class inside AttendanceController
+    public static class AttendanceRequestDTO {
+        private String studentId;
+        private String image;
+
+        public String getStudentId() { return studentId; }
+        public void setStudentId(String studentId) { this.studentId = studentId; }
+        
+        public String getImage() { return image; }
+        public void setImage(String image) { this.image = image; }
+    }
 	//Record a check-in
 	@PostMapping("/checkin")// listens for requests sent to checkin
-	public String markAttendance (@RequestParam String studentId) {
+	public String markAttendance (@RequestBody AttendanceRequestDTO request) {
+	    String studentId = request.getStudentId();
+	    
 		//declares markAttendance method that returns a saved AttendanceLog object
 		// extracts studentID passed in url and assigns it to studentID variable
 		LocalDateTime now = LocalDateTime.now();
@@ -51,7 +64,7 @@ public class AttendanceController{
 	
 	//get all attendance logs
 	
-	@GetMapping // listens for get requests
+	@GetMapping("/records") // listens for get requests
 	public List<AttendanceLog> getAllLogs() {// declares a public method named getAllLogs that returns a list of all check in records from database
 	return attendanceRepository.findAll();
 	}
