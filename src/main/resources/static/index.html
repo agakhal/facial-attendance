@@ -320,46 +320,84 @@
 	    </div>
 
 	    <!-- JavaScript to Handle Section Switching & Actions -->
-	    <script>
-	        function showPage(pageId) {
-	            // Hide all sections
-	            document.querySelectorAll('.page-section').forEach(section => {
-	                section.classList.remove('active');
-	            });
+		<!-- Replace your old <script> block with this complete script -->
+		    <script>
+		        function showPage(pageId) {
+		            document.querySelectorAll('.page-section').forEach(section => {
+		                section.classList.remove('active');
+		            });
 
-	            // Remove active style from all nav buttons
-	            document.querySelectorAll('nav button').forEach(btn => {
-	                btn.classList.remove('active-nav');
-	            });
+		            document.querySelectorAll('nav button').forEach(btn => {
+		                btn.classList.remove('active-nav');
+		            });
 
-	            // Show target section
-	            const target = document.getElementById('section-' + pageId);
-	            if (target) {
-	                target.classList.add('active');
-	            }
+		            const target = document.getElementById('section-' + pageId);
+		            if (target) {
+		                target.classList.add('active');
+		            }
 
-	            // Highlight target nav button
-	            const navBtn = document.getElementById('nav-' + pageId);
-	            if (navBtn) {
-	                navBtn.classList.add('active-nav');
-	            }
-	        }
+		            const navBtn = document.getElementById('nav-' + pageId);
+		            if (navBtn) {
+		                navBtn.classList.add('active-nav');
+		            }
 
-	        function clickPic(type) {
-	            console.log("Capture picture triggered for: " + type);
-	        }
+		            // Automatically start the webcam when switching to signup or check-in tabs
+		            if (pageId === 'signup') {
+		                startCamera('cameraLensSignup');
+		            } else if (pageId === 'checkin') {
+		                startCamera('cameraLensCheckin');
+		            }
+		        }
 
-	        function addStudentToDatabase() {
-	            console.log("Adding student to database...");
-	        }
+		        // Function to turn on the laptop camera
+		        function startCamera(videoId) {
+		            const videoElement = document.getElementById(videoId);
+		            if (videoElement && !videoElement.srcObject) {
+		                navigator.mediaDevices.getUserMedia({ video: true })
+		                    .then(stream => {
+		                        videoElement.srcObject = stream;
+		                    })
+		                    .catch(error => {
+		                        console.error("Error accessing webcam: ", error);
+		                        alert("Could not access your webcam. Please check browser permissions.");
+		                    });
+		            }
+		        }
 
-	        function checkinStudentToDatabase() {
-	            console.log("Checking in student...");
-	        }
+		        // Function to capture a snapshot from the video feed
+		        function clickPic(type) {
+		            console.log("Capture picture triggered for: " + type);
+		            const videoId = type === 'Signup' ? 'cameraLensSignup' : 'cameraLensCheckin';
+		            const previewId = type === 'Signup' ? 'photoPreviewSignup' : 'photoPreviewCheckin';
+		            
+		            const video = document.getElementById(videoId);
+		            const preview = document.getElementById(previewId);
+		            const canvas = document.getElementById('Capture');
+		            
+		            if (video && canvas && preview) {
+		                const context = canvas.getContext('2d');
+		                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+		                
+		                // Display the captured photo in the preview image tag
+		                preview.src = canvas.toDataURL('image/png');
+		                preview.style.display = 'block';
+		            }
+		        }
 
-	        function loadDashboardRecords() {
-	            console.log("Loading dashboard records...");
-	        }
-	    </script>
-	</body>
-	</html>
+		        function addStudentToDatabase() {
+		            console.log("Adding student to database...");
+		        }
+
+		        function checkinStudentToDatabase() {
+		            console.log("Checking in student...");
+		        }
+
+		        function loadDashboardRecords() {
+		            console.log("Loading dashboard records...");
+		        }
+
+		        // Auto-start camera on page load if starting on check-in or signup
+		        window.onload = function() {
+		            startCamera('cameraLensCheckin');
+		        };
+		    </script>
