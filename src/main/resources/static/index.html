@@ -491,7 +491,7 @@
                         row.innerHTML = `
                             <td>${record.studentId}</td>
                             <td>${record.name || 'N/A'}</td>
-                            <td>${record.timestamp || new Date().toLocaleString()}</td>
+                            <td>${record.checkInTime || new Date().toLocaleString()}</td>
                             <td><span style="color: #10b981; font-weight: 600;">${record.status || 'Verified'}</span></td>
                         `;
                         tableBody.appendChild(row);
