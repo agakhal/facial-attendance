@@ -5,6 +5,7 @@ import com.attendance.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.attendance.model.AttendanceLog;
+import java.time.ZoneId;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,7 +44,7 @@ public class StudentController {
 	            // Create and save the attendance log
 	            AttendanceLog log = new AttendanceLog();
 	            log.setStudentId(student.getStudentId());
-	            log.setCheckInTime(LocalDateTime.now());
+	            log.setCheckInTime(LocalDateTime.now(ZoneId.of("America/Vancouver")));
 	            attendanceRepository.save(log);
 	            
 	            return student.getName() + " : Attendance marked successfully via webcam!";
