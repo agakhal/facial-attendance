@@ -401,44 +401,46 @@
 
         // 1. Send Student Signup to Spring Boot Backend
         function addStudentToDatabase() {
-            const studentId = document.getElementById('studentId').value.trim();
-            const studentName = document.getElementById('studentName').value.trim();
-            const imageData = document.getElementById('faceVectorSignup').value;
-            const msgElement = document.getElementById('responseMessageSignup');
+    const studentId = document.getElementById('studentId').value.trim();
+    const studentName = document.getElementById('studentName').value.trim();
+    const imageData = document.getElementById('faceVectorSignup').value;
+    const msgElement = document.getElementById('responseMessageSignup');
 
-            if (!studentId || !studentName) {
-                alert("Please enter both Student ID and Name.");
-                return;
-            }
+    if (!studentId || !studentName) {
+        alert("Please enter both Student ID and Name.");
+        return;
+    }
 
-            if (!imageData) {
-                alert("Please capture your picture first!");
-                return;
-            }
+    if (!imageData) {
+        alert("Please capture your picture first!");
+        return;
+    }
 
-            msgElement.style.color = "var(--primary)";
-            msgElement.textContent = "Processing signup...";
+    msgElement.textContent = "";
 
-            fetch('/api/students/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    studentId: studentId,
-                    name: studentName,
-                    image: imageData
-                })
-            })
-            .then(response => response.text())
-            .then(data => {
-                msgElement.textContent = "Success: " + data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                msgElement.style.color = "red";
-                msgElement.textContent = "Error connecting to server.";
-            });
-        }
-
+    fetch('/api/FaceMetrics/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            studentId: studentId,
+            name: studentName,
+            faceVector: imageData
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Signup failed (" + response.status + ")");
+        return response.text();
+    })
+    .then(data => {
+        msgElement.style.color = "#10b981";
+        msgElement.textContent = data;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        msgElement.style.color = "red";
+        msgElement.textContent = "Signup failed. Please try again.";
+    });
+}
         // 2. Send Check-In to Spring Boot Backend
         function checkinStudentToDatabase() {
             const studentId = document.getElementById('checkinStudentId').value.trim();
