@@ -11,7 +11,7 @@ private String studentId; // @Id only attaches to studentId
 private String name;// does not get @Id because 2 names can be same but 2 studentIds cannot be the same
 // do not put vector here bc it is just measurements not an assigned id like social security number or id
 
-@Column (columnDefinition = "TEXT") // setup database column for the variable below me as a TEXT field
+@Column (columnDefinition = "LONGTEXT") // setup database column for the variable below me as a TEXT field
 private String faceVector; // names the SQL column faceVector 
 
 public Student() {}
