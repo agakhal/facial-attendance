@@ -464,9 +464,12 @@
                 })
             })
             .then(response => response.text())
-            .then(data => {
-                msgElement.textContent = "Check-in Result: " + data;
-            })
+           .then(data => {
+    const ok = data.toLowerCase().includes("success");
+    msgElement.style.color = ok ? "#10b981" : "#f59e0b";
+    msgElement.textContent = data;
+})
+            
             .catch(error => {
                 console.error('Error:', error);
                 msgElement.style.color = "red";
