@@ -1,4 +1,5 @@
 package com.attendance.controller;
+import com.attendance.service.FaceService;
 import com.attendance.model.Student;
 import com.attendance.repository.AttendanceRepository;
 import com.attendance.repository.StudentRepository;
@@ -23,8 +24,23 @@ public class StudentController {
 	@PostMapping ("/signup") //accepts new data like id name facial vector and saves it to database
 	public String addStudent (@RequestBody Student student) {
 		//request body extracts all information and builds a student object from that new information
-	 studentRepository.save(student);
+	 // make sure a photo was sent
+if (student.getFaceVector() == null || student.getFaceVector().isEmpty()) {
+	return "Please capture a photo first.";
+}
+
+// read the face from the photo and save its numbers on the student
+try {
+	float[] embedding = faceService.extract(student.getFaceVector());
+	student.setFaceEmbedding(FaceService.toText(embedding));
+} catch (Exception e) {
+	e.printStackTrace(); // prints the error in the logs
+	return "Could not read a face from the photo. Please try again.";
+}
+	studentRepository.save(student);
 	 return "Student " + student.getName() + " signed up successfully!";
 	}	
+	@Autowired
+	private FaceService faceService; // reads faces from photos
 	
 }
