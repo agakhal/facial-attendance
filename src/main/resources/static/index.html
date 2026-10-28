@@ -415,8 +415,8 @@
         alert("Please capture your picture first!");
         return;
     }
-
-    msgElement.textContent = "";
+    msgElement.style.color = "var(--primary)";
+    msgElement.textContent = "Reading your face... the first signup can take a minute.";
 
     fetch('/api/FaceMetrics/signup', {
         method: 'POST',
@@ -431,8 +431,8 @@
         if (!response.ok) throw new Error("Signup failed (" + response.status + ")");
         return response.text();
     })
-    .then(data => {
-        msgElement.style.color = "#10b981";
+        .then(data => {
+        msgElement.style.color = data.includes("signed up successfully") ? "#10b981" : "#f59e0b";
         msgElement.textContent = data;
     })
     .catch(error => {
@@ -490,17 +490,21 @@
                         tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No attendance records found.</td></tr>`;
                         return;
                     }
-
-                    records.forEach(record => {
+                        records.forEach(record => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${record.studentId}</td>
-                            <td>${record.name || 'N/A'}</td>
+                            <td class="idCell"></td>
+                            <td class="nameCell"></td>
                             <td>${record.checkInTime ? new Date(record.checkInTime.split('.')[0]).toLocaleString() : 'N/A'}</td>
-                            <td><span style="color: #10b981; font-weight: 600;">${record.status || 'Verified'}</span></td>
+                            <td><span style="color: #10b981; font-weight: 600;">${record.status || 'Checked in'}</span></td>
                         `;
+                        // textContent puts the ID and name in as plain text, so typed code can't run
+                        row.querySelector('.idCell').textContent = record.studentId;
+                        row.querySelector('.nameCell').textContent = record.name || 'N/A';
                         tableBody.appendChild(row);
                     });
+
+                   
                 })
                 .catch(error => {
                     console.error('Error loading records:', error);
