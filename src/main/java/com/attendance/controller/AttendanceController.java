@@ -3,6 +3,9 @@ import com.attendance.model.AttendanceLog;
 import com.attendance.repository.AttendanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.attendance.model.Student;
+import com.attendance.repository.StudentRepository;
+import com.attendance.service.FaceService;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -14,7 +17,7 @@ import java.time.Duration;
 @CrossOrigin (origins = "*") // allows any web browser or external app to talk to your springboot backend without getting blocked by security rules
 //* means give access to everyone
 public class AttendanceController{
-
+private static final double MATCH_THRESHOLD = 0.70;
 	@Autowired
 	private AttendanceRepository attendanceRepository; // instantiates automatically 
 	
@@ -35,6 +38,26 @@ public class AttendanceController{
 	@PostMapping("/checkin")// listens for requests sent to checkin
 	public String markAttendance (@RequestBody AttendanceRequestDTO request) {
 	    String studentId = request.getStudentId();
+		 // find the student who signed up with this id
+	    Student student = studentRepository.findById(studentId).orElse(null);
+	    if (student == null || student.getFaceEmbedding() == null) {
+	    	return "Student not found. Please sign up first.";
+	    }
+	    
+	    // read the face in the new photo and compare it to the face from signup
+	    double score;
+	    try {
+	    	float[] newFace = faceService.extract(request.getImage());
+	    	float[] savedFace = FaceService.fromText(student.getFaceEmbedding());
+	    	score = FaceService.cosine(newFace, savedFace);
+	    } catch (Exception e) {
+	    	e.printStackTrace(); // prints the error in the logs
+	    	return "Could not read a face from the photo. Please try again.";
+	    }
+	    System.out.println("Face match score for " + studentId + ": " + score); // so i can tune the threshold
+	    if (score < MATCH_THRESHOLD) {
+	    	return "Face does not match.";
+	    }
 	    
 		//declares markAttendance method that returns a saved AttendanceLog object
 		// extracts studentID passed in url and assigns it to studentID variable
@@ -61,6 +84,10 @@ public class AttendanceController{
 	attendanceRepository.save(log); // sends object to sql executing insert statement bts
 	return "checked in successfully!";
 	}
+	   @Autowired
+   private StudentRepository studentRepository;
+   @Autowired
+   private FaceService faceService;
 	
 	//get all attendance logs
 	@GetMapping("/records") // listens for get requests
