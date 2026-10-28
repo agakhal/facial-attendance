@@ -25,14 +25,21 @@ public class StudentController {
 	public String addStudent (@RequestBody Student student) {
 		//request body extracts all information and builds a student object from that new information
 	 // make sure a photo was sent
+if (student.getStudentId() == null || student.getStudentId().isEmpty()) {
+	return "Please enter a Student ID.";
+}
 if (student.getFaceVector() == null || student.getFaceVector().isEmpty()) {
 	return "Please capture a photo first.";
+}
+if (studentRepository.existsById(student.getStudentId())) {
+	return "That Student ID is already registered.";
 }
 
 // read the face from the photo and save its numbers on the student
 try {
 	float[] embedding = faceService.extract(student.getFaceVector());
 	student.setFaceEmbedding(FaceService.toText(embedding));
+	student.setFaceVector(null); // <-- add this line
 } catch (Exception e) {
 	e.printStackTrace(); // prints the error in the logs
 	return "Could not read a face from the photo. Please try again.";
