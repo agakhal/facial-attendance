@@ -13,6 +13,8 @@ private String name;// does not get @Id because 2 names can be same but 2 studen
 
 @Column (columnDefinition = "LONGTEXT") // setup database column for the variable below me as a TEXT field
 private String faceVector; // names the SQL column faceVector 
+@Column(columnDefinition = "TEXT")
+private String faceEmbedding;
 
 public Student() {}
 
@@ -45,8 +47,13 @@ public String getFaceVector() {
 public void setFaceVector(String faceVector) {
 	this.faceVector = faceVector;
 }
+public String getFaceEmbedding() {
+	return faceEmbedding;
+}
 
-
+public void setFaceEmbedding(String faceEmbedding) {
+	this.faceEmbedding = faceEmbedding;
+}
 
 
 // this class maps to database table using SQL 
