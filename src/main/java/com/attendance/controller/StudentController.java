@@ -19,10 +19,7 @@ public class StudentController {
 	private StudentRepository studentRepository; //instantiates so i can directly use 
 	@Autowired
 	private AttendanceRepository attendanceRepository;
-	@GetMapping // collects every record from database and hands u back full list
-	public List<Student>getAllStudents() { // defines a java method that returns a list containing student objects . getallstudents is name of that java method
-		return studentRepository.findAll(); // built in method to retrieve all data  
-}
+	
 	@PostMapping ("/signup") //accepts new data like id name facial vector and saves it to database
 	public String addStudent (@RequestBody Student student) {
 		//request body extracts all information and builds a student object from that new information
@@ -30,37 +27,4 @@ public class StudentController {
 	 return "Student " + student.getName() + " signed up successfully!";
 	}	
 	
-	@PostMapping("/checkin") 
-	public String checkInStudent (@RequestBody Student incomingData) {
-	    // Look up the student by their ID
-	    return studentRepository.findById(incomingData.getStudentId())
-	        .map(student -> {
-	            // Optional: update their face vector with the latest webcam snapshot if desired
-	            if (incomingData.getFaceVector() != null && !incomingData.getFaceVector().isEmpty()) {
-	                student.setFaceVector(incomingData.getFaceVector());
-	                studentRepository.save(student);
-	            }
-
-	            // Create and save the attendance log
-	            AttendanceLog log = new AttendanceLog();
-	            log.setStudentId(student.getStudentId());
-	            log.setCheckInTime(LocalDateTime.now(ZoneId.of("America/Vancouver")));
-	            attendanceRepository.save(log);
-	            
-	            return student.getName() + " : Attendance marked successfully via webcam!";
-	        })
-	        .orElse("Student ID not recognized. Please sign up first.");
-	}
-	@GetMapping("/{id}") //listens for a get request with a value at the end
-	public Student getStudentById(@PathVariable String id) { 
-		//extracts whatever text is typed in the end and stores it in java variable id
-		return studentRepository.findById(id).orElse(null); // runs a targeted lookup query in SQL if no student is found returns null
-	}
-	@DeleteMapping ("/{id}")  // listen for delete requests that have values in end of url
-	public String deleteStudent(@PathVariable String id) { //extracts whatever text is typed in the end and stores it in java variable id
-		studentRepository.deleteById(id); //executes a deletion query in SQL
-		return "Student with ID" + id + " has been deleted.";
-	}
-	
-	}
-	
+}
