@@ -16,7 +16,7 @@ private Long id;
 
 private String studentId; // column that stores the id of student who checked in
 private LocalDateTime checkInTime; //column that stores the timestamp of when they checked in
-
+private String name;
 
 public AttendanceLog() {
 	
@@ -26,7 +26,13 @@ public AttendanceLog (String studentId, LocalDateTime checkInTime) {
 	this.studentId = studentId;
 	this.checkInTime = checkInTime;
 }
+public String getName() {
+	return name;
+}
 
+public void setName(String name) {
+	this.name = name;
+}
 public Long getId() {
 	return id;
 }
