@@ -1,63 +1,82 @@
-FaceMetric: Webcam Attendance System
+# FaceMetric: Webcam Attendance System
 
 A full-stack web app for tracking attendance. Students register with a webcam photo, then check in using their student ID and face verification. Attendance is logged with timestamps and shown on a dashboard.
 
-Live demo: https://facial-attendance-vlca.onrender.com/
+**Live demo:** https://facial-attendance-vlca.onrender.com/
 
-Features
-Student signup: enter your ID and name and capture a webcam photo, which is converted into a face embedding
-Face verification at check-in: compares your live photo's embedding with the one from signup using cosine similarity
-Duplicate check-in prevention: repeat check-ins within a 5-minute window are rejected
-Pacific-time timestamps (America/Vancouver) on every record
-Attendance dashboard with student ID, name, time, and status
-Tech Stack
-Backend: Java 17, Spring Boot 3.3, Spring Web (REST), Spring Data JPA
-Database: MySQL
-Frontend: HTML, CSS, vanilla JavaScript (MediaDevices API for the webcam, Canvas API for capture)
-Build and deployment: Maven, Docker, hosted on Render
-Face recognition: Deep Java Library (DJL) with a pretrained PyTorch model
-API Endpoints
-Method	Endpoint	Purpose
-POST	/api/FaceMetrics/signup	Register a student (ID, name, photo)
-POST	/api/attendance/checkin	Log a check-in
-GET	/api/attendance/records	List attendance records
-Current Limitations
-The attendance dashboard and records API are public. Please don't use real student data with the demo.
-Face matching accuracy hasn't been formally evaluated.
-There is no liveness check, so don't rely on this demo to prevent spoofing.
-Roadmap
-Authentication for the dashboard and records API
-Running Locally
+## Features
 
-Prerequisites: Java 17 and a running MySQL instance.
+- **Student signup:** enter your ID and name and capture a webcam photo, which is converted into a face embedding
+- **Face verification at check-in:** compares your live photo's embedding with the one from signup using cosine similarity
+- **Duplicate check-in prevention:** repeat check-ins within a 5-minute window are rejected
+- **Pacific-time timestamps** (America/Vancouver) on every record
+- **Attendance dashboard** with student ID, name, time, and status
 
-bash
+## Tech Stack
+
+- **Backend:** Java 17, Spring Boot 3.3, Spring Web (REST), Spring Data JPA
+- **Database:** MySQL
+- **Frontend:** HTML, CSS, vanilla JavaScript (MediaDevices API for the webcam, Canvas API for capture)
+- **Build and deployment:** Maven, Docker, hosted on Render
+- **Face recognition:** Deep Java Library (DJL) with a pretrained PyTorch model
+
+## API Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/api/FaceMetrics/signup` | Register a student (ID, name, photo) |
+| POST | `/api/attendance/checkin` | Log a check-in |
+| GET | `/api/attendance/records` | List attendance records |
+
+## Current Limitations
+
+- The attendance dashboard and records API are public. Please don't use real student data with the demo.
+- Face matching accuracy hasn't been formally evaluated.
+- There is no liveness check, so don't rely on this demo to prevent spoofing.
+
+## Roadmap
+
+- Authentication for the dashboard and records API
+
+## Running Locally
+
+**Prerequisites:** Java 17 and a running MySQL instance.
+
+```bash
 git clone https://github.com/agakhal/facial-attendance.git
 cd facial-attendance
-Create a MySQL database named facemetric.
-Set these environment variables before running:
-bash
+```
+
+1. Create a MySQL database named `facemetric`.
+2. Set these environment variables before running:
+
+```bash
 export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/facemetric
 export SPRING_DATASOURCE_USERNAME=your_mysql_username
 export SPRING_DATASOURCE_PASSWORD=your_mysql_password
+```
 
-On Windows (PowerShell), use $env:SPRING_DATASOURCE_URL="..." instead of export.
+On Windows (PowerShell), use `$env:SPRING_DATASOURCE_URL="..."` instead of `export`.
 
-Run:
-bash
+3. Run:
+
+```bash
 ./mvnw spring-boot:run
+```
 
-Open http://localhost:8080 and allow camera access when prompted.
+Open `http://localhost:8080` and allow camera access when prompted.
 
-With Docker:
+**With Docker:**
 
-bash
+```bash
 docker build -t facemetric .
 docker run -p 8080:8080 \
   -e SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/facemetric \
   -e SPRING_DATASOURCE_USERNAME=your_mysql_username \
   -e SPRING_DATASOURCE_PASSWORD=your_mysql_password \
   facemetric
-Author
+```
 
-Aavleen Gakhal: LinkedIn
+## Author
+
+Aavleen Gakhal: [LinkedIn](https://www.linkedin.com/in/aavleen-gakhal/)
