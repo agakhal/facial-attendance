@@ -6,8 +6,8 @@ A full-stack web app for tracking attendance. Students register with a webcam ph
 
 ## Features
 
-- **Student signup:** enter your ID and name and capture a photo with your webcam
-- **Check-in:** enter your student ID and capture a photo to log attendance
+- **Student signup:** enter your ID and name and capture a webcam photo, which is converted into a face embedding
+- **Face verification at check-in:** compares your live photo's embedding with the one from signup using cosine similarity
 - **Duplicate check-in prevention:** repeat check-ins within a 5-minute window are rejected
 - **Pacific-time timestamps** (America/Vancouver) on every record
 - **Attendance dashboard** with student ID, name, time, and status
@@ -18,6 +18,7 @@ A full-stack web app for tracking attendance. Students register with a webcam ph
 - **Database:** MySQL
 - **Frontend:** HTML, CSS, vanilla JavaScript (MediaDevices API for the webcam, Canvas API for capture)
 - **Build and deployment:** Maven, Docker, hosted on Render
+- **Face recognition:** Deep Java Library (DJL) with a pretrained PyTorch model
 
 ## API Endpoints
 
@@ -27,10 +28,15 @@ A full-stack web app for tracking attendance. Students register with a webcam ph
 | POST | `/api/attendance/checkin` | Log a check-in |
 | GET | `/api/attendance/records` | List attendance records |
 
+## Current Limitations
+
+- The attendance dashboard and records API are public. Please don't use real student data with the demo.
+- Face matching accuracy hasn't been formally evaluated.
+- There is no liveness check, so don't rely on this demo to prevent spoofing.
+
 ## Roadmap
 
-- Face verification at check-in: compare the live photo to the registered photo using Deep Java Library (DJL) with PyTorch
-- Authentication for the dashboard
+- Authentication for the dashboard and records API
 
 ## Running Locally
 
