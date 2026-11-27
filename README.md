@@ -1,6 +1,6 @@
 # FaceMetric: Webcam Attendance System
 
-A full-stack web app for tracking attendance. Students register with a webcam photo and check in with their student ID. Attendance is logged with timestamps and shown on a live dashboard.
+A full-stack web app for tracking attendance. Students register with a webcam photo, then check in using their student ID and face verification. Attendance is logged with timestamps and shown on a dashboard.
 
 **Live demo:** https://facial-attendance-vlca.onrender.com/
 
