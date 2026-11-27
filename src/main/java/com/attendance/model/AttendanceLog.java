@@ -26,7 +26,13 @@ public AttendanceLog (String studentId, LocalDateTime checkInTime) {
 	this.studentId = studentId;
 	this.checkInTime = checkInTime;
 }
+public String getName() {
+	return name;
+}
 
+public void setName(String name) {
+	this.name = name;
+}
 public Long getId() {
 	return id;
 }
