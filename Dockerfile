@@ -2,7 +2,8 @@ FROM maven:3.8.4-openjdk-17 AS build
 COPY . .
 RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
+RUN apt-get update && apt-get install -y libstdc++6 libgomp1 && rm -rf /var/lib/apt/lists/*
 COPY --from=build /target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]
